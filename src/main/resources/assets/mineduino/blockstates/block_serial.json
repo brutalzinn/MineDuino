@@ -1,0 +1,6 @@
+{
+  "variants": {
+    "type=rx":    { "model": "mineduino:block_serial_rx" },
+    "type=tx":    { "model": "mineduino:block_serial_tx" }
+  }
+}
