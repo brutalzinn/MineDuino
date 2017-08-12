@@ -15,6 +15,7 @@
 
 package XFactHD.mineduino.common.utils.serial;
 
+import XFactHD.mineduino.common.utils.ConfigHandler;
 import XFactHD.mineduino.common.utils.LogHelper;
 import gnu.io.CommPortIdentifier;
 import gnu.io.SerialPort;
@@ -31,8 +32,6 @@ import java.util.Locale;
 public class SerialHandler implements SerialPortEventListener
 {
     private static final SerialHandler INSTANCE = new SerialHandler();
-
-    private static final String[] PORT_NAMES = {"/dev/tty.usbserial-A9007UX1" /*Mac OS X*/, "/dev/ttyUSB0" /*Linux*/, "COM3" /*Windows*/};
 
     private boolean initialized = false;
     private SerialPort port;
@@ -58,13 +57,10 @@ public class SerialHandler implements SerialPortEventListener
         while (portEnum.hasMoreElements())
         {
             CommPortIdentifier currPortId = (CommPortIdentifier) portEnum.nextElement();
-            for (String name : PORT_NAMES)
+            if (currPortId.getName().equals(ConfigHandler.port))
             {
-                if (currPortId.getName().equals(name))
-                {
-                    portId = currPortId;
-                    break;
-                }
+                portId = currPortId;
+                break;
             }
         }
         if (portId == null)
