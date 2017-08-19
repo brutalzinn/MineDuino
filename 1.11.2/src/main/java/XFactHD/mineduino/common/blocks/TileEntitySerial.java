@@ -108,7 +108,7 @@ public abstract class TileEntitySerial extends TileEntity
     {
         if (world != null)
         {
-            world.notifyNeighborsOfStateChange(pos, world.getBlockState(pos).getBlock());
+            world.notifyNeighborsOfStateChange(pos, world.getBlockState(pos).getBlock(), true);
         }
     }
 

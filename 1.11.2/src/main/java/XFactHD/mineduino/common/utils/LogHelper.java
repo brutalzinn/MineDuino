@@ -15,14 +15,22 @@
 
 package XFactHD.mineduino.common.utils;
 
-import net.minecraftforge.fml.common.FMLLog;
+import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.Logger;
 
 public class LogHelper
 {
+    private static Logger logger;
+
+    public static void init(FMLPreInitializationEvent event)
+    {
+        logger = event.getModLog();
+    }
+
     private static void log(Level logLevel, Object object, Object... data)
     {
-        FMLLog.log(Reference.MOD_ID, logLevel, String.valueOf(object), object, data);
+        logger.log(logLevel, String.valueOf(object), object, data);
     }
 
     public static void all(Object object, Object... data)

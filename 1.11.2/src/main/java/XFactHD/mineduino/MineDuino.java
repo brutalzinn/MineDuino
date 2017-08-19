@@ -100,6 +100,7 @@ public class MineDuino
     public void preInit(FMLPreInitializationEvent event)
     {
         proxy.preInit(event);
+        LogHelper.init(event);
     }
 
     @Mod.EventHandler

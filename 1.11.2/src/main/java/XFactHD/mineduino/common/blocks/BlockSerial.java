@@ -29,10 +29,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
-import net.minecraft.util.IStringSerializable;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.*;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
@@ -66,7 +63,7 @@ public class BlockSerial extends Block
     }
 
     @Override
-    public void getSubBlocks(Item item, CreativeTabs tab, List<ItemStack> list)
+    public void getSubBlocks(Item item, CreativeTabs tab, NonNullList<ItemStack> list)
     {
         list.add(new ItemStack(this, 1, 0));
         list.add(new ItemStack(this, 1, 1));
@@ -91,7 +88,7 @@ public class BlockSerial extends Block
     }
 
     @Override
-    public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, @Nullable ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ)
+    public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ)
     {
         if (!world.isRemote)
         {
@@ -138,7 +135,7 @@ public class BlockSerial extends Block
         TileEntity te = world.getTileEntity(pos);
         if (te != null) { te.invalidate(); }
         super.breakBlock(world, pos, state);
-        world.notifyNeighborsOfStateChange(pos, this);
+        world.notifyNeighborsOfStateChange(pos, this, true);
     }
 
     @Override
@@ -163,7 +160,7 @@ public class BlockSerial extends Block
 
     @Nullable
     @Override
-    public AxisAlignedBB getCollisionBoundingBox(IBlockState state, World world, BlockPos pos)
+    public AxisAlignedBB getCollisionBoundingBox(IBlockState state, IBlockAccess world, BlockPos pos)
     {
         return new AxisAlignedBB(0, 0, 0, 1, 6F/16F, 1);
     }

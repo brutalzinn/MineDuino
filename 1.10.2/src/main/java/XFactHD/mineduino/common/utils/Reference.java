@@ -19,7 +19,7 @@ public class Reference
 {
     public static final String MOD_ID = "mineduino";
     public static final String NAME = "MineDuino";
-    public static final String VERSION = "0.1";
+    public static final String VERSION = "1.10.2-0.2";
     public static final String SERVER_PROXY = "XFactHD.mineduino.common.CommonProxy";
     public static final String CLIENT_PROXY = "XFactHD.mineduino.client.ClientProxy";
 }
