@@ -1,0 +1,62 @@
+buildscript {
+    repositories {
+        jcenter()
+        maven {
+            name = "forge"
+            url = "http://files.minecraftforge.net/maven"
+        }
+    }
+    dependencies {
+        classpath 'net.minecraftforge.gradle:ForgeGradle:2.2-SNAPSHOT'
+    }
+}
+
+apply plugin: 'net.minecraftforge.gradle.forge'
+
+compileJava {
+  sourceCompatibility = '1.8'
+  targetCompatibility = '1.8'
+}
+
+version = "1.10.2-0.1"
+group= "XFactHD.mineduino"
+archivesBaseName = "MineDuino"
+
+minecraft {
+    version = "1.10.2-12.18.3.2221"
+    runDir = "run"
+    mappings = "stable_29"
+}
+
+configurations {
+    embed
+    compile.extendsFrom embed
+}
+
+dependencies {
+	embed files("libs/RXTXcomm.jar")
+}
+
+processResources
+{
+    inputs.property "version", project.version
+    inputs.property "mcversion", project.minecraft.version
+
+    from(sourceSets.main.resources.srcDirs) {
+        include 'mcmod.info'
+        expand 'version':project.version, 'mcversion':project.minecraft.version
+    }
+        
+    from(sourceSets.main.resources.srcDirs) {
+        exclude 'mcmod.info'
+    }
+	
+	from ("/run") {
+		include 'rxtxParallel.dll'
+		include 'rxtxSerial.dll'
+	}
+}
+
+jar {
+    from configurations.embed.collect { it.isDirectory() ? it : zipTree(it) }
+}

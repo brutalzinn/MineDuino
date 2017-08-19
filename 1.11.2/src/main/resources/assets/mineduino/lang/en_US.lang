@@ -1,0 +1,12 @@
+tile.mineduino:block_serial_tx.name=Serial Sender
+tile.mineduino:block_serial_rx.name=Serial Receiver
+
+mode.mineduino:none.name=Deactivated
+mode.mineduino:dr.name=Digital Read
+mode.mineduino:drp.name=Digital Read with Pullup
+mode.mineduino:dw.name=Digital Write
+mode.mineduino:ar.name=Analog Read
+mode.mineduino:aw.name=Analog Write
+mode.mineduino:ir.name=Interrupt
+
+gui.mineduino:mode.name=Mode:
