@@ -47,13 +47,11 @@ public class CommonProxy implements IGuiHandler
 
     public void init(FMLInitializationEvent event)
     {
+        Content.init();
         SerialHandler.getSerialHandler().initialize();
     }
 
-    public void postInit(FMLPostInitializationEvent event)
-    {
-
-    }
+    public void postInit(FMLPostInitializationEvent event) {}
 
     @SubscribeEvent
     public void serverStopped(FMLServerStoppedEvent event)

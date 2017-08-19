@@ -17,6 +17,10 @@ package XFactHD.mineduino.common;
 
 import XFactHD.mineduino.common.blocks.BlockSerial;
 import net.minecraft.block.Block;
+import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
+import net.minecraft.item.ItemStack;
+import net.minecraftforge.fml.common.registry.GameRegistry;
 
 public class Content
 {
@@ -25,5 +29,11 @@ public class Content
     public static void preInit()
     {
         blockSerial = new BlockSerial();
+    }
+
+    public static void init()
+    {
+        GameRegistry.addShapedRecipe(new ItemStack(blockSerial, 1, 0), "ITI", "RCR", "III", 'I', Items.IRON_INGOT, 'T', Blocks.REDSTONE_TORCH, 'R', Items.REDSTONE, 'C', Items.COMPARATOR);
+        GameRegistry.addShapedRecipe(new ItemStack(blockSerial, 1, 1), "ITI", "RLR", "III", 'I', Items.IRON_INGOT, 'T', Blocks.REDSTONE_TORCH, 'R', Items.REDSTONE, 'L', Blocks.LEVER);
     }
 }
