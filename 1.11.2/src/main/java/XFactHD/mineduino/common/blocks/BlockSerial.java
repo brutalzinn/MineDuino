@@ -39,7 +39,6 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 
 import javax.annotation.Nullable;
-import java.util.List;
 
 @SuppressWarnings("deprecation")
 public class BlockSerial extends Block
