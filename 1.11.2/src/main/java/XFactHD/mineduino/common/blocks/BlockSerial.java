@@ -36,13 +36,16 @@ import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 
 import javax.annotation.Nullable;
 
 @SuppressWarnings("deprecation")
+
 public class BlockSerial extends Block
 {
+
     public static final PropertyEnum<Type> TYPE = PropertyEnum.create("type", Type.class);
 
     public BlockSerial()
@@ -55,13 +58,13 @@ public class BlockSerial extends Block
         setResistance(10.0F);
         setSoundType(SoundType.METAL);
         setHarvestLevel("pickaxe", 1);
-        GameRegistry.register(this);
-        GameRegistry.register(new ItemBlockSerial(this).setRegistryName(getRegistryName()));
+
+        ForgeRegistries.ITEMS.register(new ItemBlockSerial(this).setRegistryName(getRegistryName()));
         GameRegistry.registerTileEntity(TileEntitySerialSender.class, "SerialSender");
         GameRegistry.registerTileEntity(TileEntitySerialReceiver.class, "SerialReceiver");
     }
 
-    @Override
+
     public void getSubBlocks(Item item, CreativeTabs tab, NonNullList<ItemStack> list)
     {
         list.add(new ItemStack(this, 1, 0));

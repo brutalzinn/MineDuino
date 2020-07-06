@@ -7,7 +7,7 @@ buildscript {
         }
     }
     dependencies {
-        classpath 'net.minecraftforge.gradle:ForgeGradle:2.2-SNAPSHOT'
+        classpath 'net.minecraftforge.gradle:ForgeGradle:2.3-SNAPSHOT'
     }
 }
 
@@ -18,14 +18,14 @@ compileJava {
   targetCompatibility = '1.8'
 }
 
-version = "1.11.2-0.1"
+version = "1.12.2"
 group= "XFactHD.mineduino"
 archivesBaseName = "MineDuino"
 
 minecraft {
-    version = "1.11.2-13.20.1.2454"
+    version = "1.12.2-14.23.5.2847"
     runDir = "run"
-    mappings = "snapshot_20161220"
+    mappings = "snapshot_20171003"
 }
 
 configurations {
@@ -44,11 +44,15 @@ processResources
     inputs.property "version", project.version
     inputs.property "mcversion", project.minecraft.version
 
+    // replace stuff in mcmod.info, nothing else
     from(sourceSets.main.resources.srcDirs) {
         include 'mcmod.info'
+
+        // replace version and mcversion
         expand 'version':project.version, 'mcversion':project.minecraft.version
     }
-        
+
+    // copy everything else except the mcmod.info
     from(sourceSets.main.resources.srcDirs) {
         exclude 'mcmod.info'
     }

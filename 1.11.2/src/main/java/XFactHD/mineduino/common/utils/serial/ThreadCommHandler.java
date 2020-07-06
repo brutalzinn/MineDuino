@@ -59,7 +59,7 @@ public class ThreadCommHandler
                 if (!posWaitingFor.containsKey(pin)) { posWaitingFor.put(pin, new ArrayList<>()); }
                 for (DimBlockPos pos : posWaitingFor.get(pin))
                 {
-                    World world = FMLCommonHandler.instance().getMinecraftServerInstance().worldServerForDimension(pos.getDim());
+                    World world = FMLCommonHandler.instance().getMinecraftServerInstance().getWorld(pos.getDim());
                     TileEntity te = world.getTileEntity(pos.getPos());
                     if (te instanceof TileEntitySerialReceiver)
                     {

@@ -18,7 +18,6 @@ package XFactHD.mineduino.common;
 import XFactHD.mineduino.common.blocks.BlockSerial;
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
-import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 
@@ -33,7 +32,12 @@ public class Content
 
     public static void init()
     {
-        GameRegistry.addShapedRecipe(new ItemStack(blockSerial, 1, 0), "ITI", "RCR", "III", 'I', Items.IRON_INGOT, 'T', Blocks.REDSTONE_TORCH, 'R', Items.REDSTONE, 'C', Items.COMPARATOR);
-        GameRegistry.addShapedRecipe(new ItemStack(blockSerial, 1, 1), "ITI", "RLR", "III", 'I', Items.IRON_INGOT, 'T', Blocks.REDSTONE_TORCH, 'R', Items.REDSTONE, 'L', Blocks.LEVER);
+       //GameRegistry.addShapedRecipe(new ItemStack(blockSerial, 1, 0), "ITI", "RCR", "III", 'I', new ItemStack(Items.IRON_INGOT), 'T', Blocks.REDSTONE_TORCH, 'R', Items.REDSTONE, 'C', Items.COMPARATOR);
+     //  GameRegistry.addShapedRecipe(new ItemStack(blockSerial, 1, 1), "ITI", "RLR", "III", 'I', new ItemStack(Items.IRON_INGOT), 'T',  Blocks.REDSTONE_TORCH, 'R', Items.REDSTONE, 'L', Blocks.LEVER);
+        GameRegistry.addSmelting(new ItemStack(Blocks.DIAMOND_BLOCK, 1),new ItemStack(blockSerial, 1, 0), 1.5f);
+
+        GameRegistry.addSmelting(new ItemStack(Blocks.GOLD_BLOCK, 1),new ItemStack(blockSerial, 1, 1), 1.5f);
+
+
     }
 }

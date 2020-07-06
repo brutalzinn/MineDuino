@@ -60,7 +60,7 @@ public class GuiBlockSerial extends GuiContainer
         this.buttonList.add(new GuiButton(0, guiLeft + 10,   guiTop + 40, 40, 20, "Prior"));
         this.buttonList.add(new GuiButton(1, guiLeft + 170, guiTop + 40, 40, 20, "Next"));
         this.buttonList.add(new GuiButton(2, guiLeft + 90,  guiTop + 80, 40, 20, "Apply"));
-        pinField = new GuiFilteredTextField(3, this.fontRendererObj, guiLeft + 115, guiTop + 10, 20, 14, "0123456789A");
+        pinField = new GuiFilteredTextField(3, this.fontRenderer, guiLeft + 115, guiTop + 10, 20, 14, "0123456789A");
         pinField.setCanLoseFocus(false);
         pinField.setFocused(true);
         pinField.setMaxStringLength(2);
@@ -72,10 +72,10 @@ public class GuiBlockSerial extends GuiContainer
     {
         mc.getRenderManager().renderEngine.bindTexture(new ResourceLocation("mineduino:textures/gui/gui_block_serial.png"));
         this.drawTexturedModalRect(guiLeft, guiTop, 0, 0, 220, 110);
-        drawString(fontRendererObj, TextFormatting.WHITE + "Pin:", guiLeft + 91, guiTop + 13, 16);
+        drawString(fontRenderer, TextFormatting.WHITE + "Pin:", guiLeft + 91, guiTop + 13, 16);
         pinField.drawTextBox();
-        drawCenteredString(fontRendererObj, TextFormatting.WHITE + I18n.format("gui.mineduino:mode.name"), guiLeft + 110, guiTop + 40, 16);
-        drawCenteredString(fontRendererObj, TextFormatting.WHITE + I18n.format(mode.getName()), guiLeft + 110, guiTop + 50, 16);
+        drawCenteredString(fontRenderer, TextFormatting.WHITE + I18n.format("gui.mineduino:mode.name"), guiLeft + 110, guiTop + 40, 16);
+        drawCenteredString(fontRenderer, TextFormatting.WHITE + I18n.format(mode.getName()), guiLeft + 110, guiTop + 50, 16);
     }
 
     @Override

@@ -72,7 +72,7 @@ public class PacketUpdateSerialParams implements IMessage
                 @Override
                 public void run()
                 {
-                    World world = ctx.getServerHandler().playerEntity.world;
+                    World world = ctx.getServerHandler().player.world;
                     TileEntity te = world.getTileEntity(message.pos);
                     if (te instanceof TileEntitySerial)
                     {
