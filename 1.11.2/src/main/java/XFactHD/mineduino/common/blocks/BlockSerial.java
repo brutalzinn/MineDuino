@@ -41,6 +41,8 @@ import net.minecraftforge.fml.common.registry.GameRegistry;
 
 import javax.annotation.Nullable;
 
+import static net.minecraftforge.fml.common.registry.ForgeRegistries.BLOCKS;
+
 @SuppressWarnings("deprecation")
 
 public class BlockSerial extends Block
@@ -59,7 +61,13 @@ public class BlockSerial extends Block
         setSoundType(SoundType.METAL);
         setHarvestLevel("pickaxe", 1);
 
+BLOCKS.register(this);
+
         ForgeRegistries.ITEMS.register(new ItemBlockSerial(this).setRegistryName(getRegistryName()));
+
+
+
+
         GameRegistry.registerTileEntity(TileEntitySerialSender.class, "SerialSender");
         GameRegistry.registerTileEntity(TileEntitySerialReceiver.class, "SerialReceiver");
     }
