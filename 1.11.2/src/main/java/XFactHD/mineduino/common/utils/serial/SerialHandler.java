@@ -26,9 +26,13 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.net.ServerSocket;
+import java.net.Socket;
 import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.Locale;
+
+import static XFactHD.mineduino.common.utils.ConfigHandler.modo;
 
 public class SerialHandler implements SerialPortEventListener
 {
@@ -43,8 +47,9 @@ public class SerialHandler implements SerialPortEventListener
     private OutputStream output;
     private static final int TIME_OUT = 5;
     private static final int DATA_RATE = 38400;
+    public static   ServerSocket socket_server;
     private static volatile boolean portReady = true;
-
+public static Socket socket_cliente;
     public static SerialHandler getSerialHandler()
     {
         return INSTANCE;
@@ -54,7 +59,7 @@ public class SerialHandler implements SerialPortEventListener
     {
         CommPortIdentifier portId = null;
         Enumeration portEnum = CommPortIdentifier.getPortIdentifiers();
-
+        if(modo.equals("serial")){
         while (portEnum.hasMoreElements())
         {
             CommPortIdentifier currPortId = (CommPortIdentifier) portEnum.nextElement();
@@ -72,8 +77,13 @@ public class SerialHandler implements SerialPortEventListener
 
         try
         {
+
             port = (SerialPort) portId.open("MineDuino", TIME_OUT);
             port.setSerialPortParams(DATA_RATE, SerialPort.DATABITS_8, SerialPort.STOPBITS_1, SerialPort.PARITY_NONE);
+
+
+
+
 
             input = new BufferedReader(new InputStreamReader(port.getInputStream()));
             output = port.getOutputStream();
@@ -82,6 +92,7 @@ public class SerialHandler implements SerialPortEventListener
             port.notifyOnDataAvailable(true);
 
             initialized = true;
+
         }
         catch (Exception e)
         {
@@ -110,12 +121,67 @@ public class SerialHandler implements SerialPortEventListener
                 }
             }
         };
-        if (initialized) { senderThread.start(); }
-    }
+        if (initialized) { senderThread.start();
+
+
+
+        }
+        }else{
+
+             socket_server = null;
+            try {
+                socket_server = new ServerSocket(8888);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            try {
+                socket_cliente = socket_server.accept();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            try {
+                output = socket_cliente.getOutputStream();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            try {
+                input = new BufferedReader(new InputStreamReader(socket_cliente.getInputStream()));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            initialized = true;
+            senderThread = new Thread("MineDuinoSerialSender")
+            {
+                private long time = 0;
+
+                @Override
+                @SuppressWarnings("InfiniteLoopStatement")
+                public void run()
+                {
+                    while (true)
+                    {
+                        time = System.currentTimeMillis();
+                        ThreadCommHandler.executeQueuedTasks();
+                        try { sleep(50 - (System.currentTimeMillis() - time)); }
+                        catch (InterruptedException e)
+                        {
+                            LogHelper.error("Thread '" + Thread.currentThread().getName() + "' was interrupted!");
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            };
+
+            if (initialized) {
+                senderThread.start();
+            }
+        }
+        }
 
     @Override
     public synchronized void serialEvent(SerialPortEvent event)
     {
+
         if (event.getEventType() == SerialPortEvent.DATA_AVAILABLE)
         {
             try
@@ -156,19 +222,33 @@ public class SerialHandler implements SerialPortEventListener
     public Exception sendMessage(String pin, PinMode mode, int value)
     {
         Exception exception = null;
-        checkPortReady();
-        try
-        {
-            if (mode.isReceiver()) { portReady = false; }
+
+        if(modo.equals("socket")){
+
             String out = pin + ";" + mode.toString() + ";" + Integer.toString(value);
-            //System.out.println("DataOut: " + out);
-            output.write(out.getBytes());
+            try {
+                output.write(out.getBytes());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+        }else {
+
+
+            checkPortReady();
+            try {
+                if (mode.isReceiver()) {
+                    portReady = false;
+                }
+                String out = pin + ";" + mode.toString() + ";" + Integer.toString(value);
+               System.out.println("DataOut: " + out);
+                output.write(out.getBytes());
+            } catch (IOException e) {
+                exception = e;
+            }
         }
-        catch (IOException e)
-        {
-            exception = e;
-        }
-        return exception;
+            return exception;
+
     }
 
     public Exception requestValue(String pin, PinMode mode)

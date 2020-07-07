@@ -32,7 +32,7 @@ public class ConfigHandler
     public static ArrayList<String> pwmPins = new ArrayList<>(); //All digital pins with PWM functionality
     public static ArrayList<String> irPins = new ArrayList<>(); //All pins wiht interrupt capability
     public static ArrayList<String> analogPins = new ArrayList<>(); //All pins with ADCs (voltage level reading)
-
+public static String modo;
     public static void init(File configFile)
     {
         if (configuration == null)
@@ -53,6 +53,9 @@ public class ConfigHandler
 
     private static void loadConfiguration()
     {
+
+        modo = configuration.getString("modo", "General", "serial", "This needs to be set to the COM port your Arduino is connected to!");
+
         port = configuration.getString("comPort", "General", "COM3", "This needs to be set to the COM port your Arduino is connected to!");
         String digitalPins = configuration.getString("digitalPins", "Pins",   "2;3;4;5;6;7;8;9;10;11;12;13", "Put all the digital pins of your Arduino here, sperated by semicolons. " +
                 "Note: These most not contain the RX and TX pins used by the USB-to-Serial-Adapter (for example pin 0 and 1 on the Arduino UNO)!!!");
