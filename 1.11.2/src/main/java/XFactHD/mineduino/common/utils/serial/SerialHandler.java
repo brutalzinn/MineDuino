@@ -21,6 +21,11 @@ import gnu.io.CommPortIdentifier;
 import gnu.io.SerialPort;
 import gnu.io.SerialPortEvent;
 import gnu.io.SerialPortEventListener;
+import jdk.jfr.events.SocketReadEvent;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraftforge.event.entity.EntityJoinWorldEvent;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import scala.actors.Debug;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -149,6 +154,7 @@ public static Socket socket_cliente;
             } catch (IOException e) {
                 e.printStackTrace();
             }
+
             initialized = true;
             senderThread = new Thread("MineDuinoSerialSender")
             {
@@ -162,7 +168,14 @@ public static Socket socket_cliente;
                     {
                         time = System.currentTimeMillis();
                         ThreadCommHandler.executeQueuedTasks();
-                        try { sleep(50 - (System.currentTimeMillis() - time)); }
+                        try { sleep(50 - (System.currentTimeMillis() - time));
+
+
+
+
+
+
+                        }
                         catch (InterruptedException e)
                         {
                             LogHelper.error("Thread '" + Thread.currentThread().getName() + "' was interrupted!");
@@ -177,10 +190,53 @@ public static Socket socket_cliente;
             }
         }
         }
+    @SubscribeEvent
+    public void onEntityJoinWorld(EntityJoinWorldEvent event) {
+        if (event.getEntity() instanceof EntityPlayer && !event.getEntity().world.isRemote) {
 
+
+            Debug.warning("Debugando.. player entrou no mundo.");
+
+        }
+    }
+
+
+    public synchronized void serialEvent(SocketReadEvent event){
+
+        try
+        {
+            if (input.ready())
+            {
+                portReady = false;
+                String[] vals = new String[] {"none","dr","drp","dw","ar","aw","ir"};
+                String data = input.readLine();
+                System.out.println("DataIn: " + data);
+                String[] parts = data.split(";");
+                if (Arrays.asList(vals).contains(parts[1]) && parts.length == 3)
+                {
+                    ThreadCommHandler.receiveData(parts[0], PinMode.fromString(parts[1]), Integer.valueOf(parts[2]));
+                }
+                portReady = true;
+            }
+        }
+        catch (Exception e)
+        {
+            System.err.println(e.toString());
+            e.printStackTrace();
+        }
+    }
     @Override
     public synchronized void serialEvent(SerialPortEvent event)
     {
+if(modo.equals("socket")){
+
+
+
+
+
+}else{
+
+
 
         if (event.getEventType() == SerialPortEvent.DATA_AVAILABLE)
         {
@@ -191,7 +247,7 @@ public static Socket socket_cliente;
                     portReady = false;
                     String[] vals = new String[] {"none","dr","drp","dw","ar","aw","ir"};
                     String data = input.readLine();
-                    //System.out.println("DataIn: " + data);
+                  System.out.println("DataIn: " + data);
                     String[] parts = data.split(";");
                     if (Arrays.asList(vals).contains(parts[1]) && parts.length == 3)
                     {
@@ -205,6 +261,8 @@ public static Socket socket_cliente;
                 System.err.println(e.toString());
                 e.printStackTrace();
             }
+
+        }
         }
     }
 
@@ -225,8 +283,9 @@ public static Socket socket_cliente;
 
         if(modo.equals("socket")){
 
-            String out = pin + ";" + mode.toString() + ";" + Integer.toString(value);
             try {
+                String out = pin + ";" + mode.toString() + ";" + Integer.toString(value);
+
                 output.write(out.getBytes());
             } catch (IOException e) {
                 e.printStackTrace();
@@ -254,6 +313,22 @@ public static Socket socket_cliente;
     public Exception requestValue(String pin, PinMode mode)
     {
         Exception exception = null;
+        if(modo.equals("socket")){
+
+            try {
+                String out = pin + ";" + mode.toString() + ";-1";
+
+                output.write(out.getBytes());
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+        }else {
+
+
+
+
         checkPortReady();
         try
         {
@@ -264,22 +339,34 @@ public static Socket socket_cliente;
         {
             exception = e;
         }
+        }
         return exception;
     }
 
-    public Exception setInterrupt(String pin, boolean active)
-    {
+    public Exception setInterrupt(String pin, boolean active) {
         Exception exception = null;
+        if (modo.equals("socket")) {
+
+
+            try {
+                String out = pin + ";ir;" + (active ? "1" : "0");
+                output.write(out.getBytes());
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+        } else {
+
+        }
         checkPortReady();
-        try
-        {
+        try {
             String out = pin + ";ir;" + (active ? "1" : "0");
             output.write(out.getBytes());
-        }
-        catch (IOException e)
-        {
+        } catch (IOException e) {
             exception = e;
         }
+
         return exception;
     }
 
