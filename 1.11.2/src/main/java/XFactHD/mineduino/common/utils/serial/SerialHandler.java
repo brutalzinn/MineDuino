@@ -21,7 +21,6 @@ import gnu.io.CommPortIdentifier;
 import gnu.io.SerialPort;
 import gnu.io.SerialPortEvent;
 import gnu.io.SerialPortEventListener;
-import jdk.jfr.events.SocketReadEvent;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -141,6 +140,7 @@ public static Socket socket_cliente;
             }
             try {
                 socket_cliente = socket_server.accept();
+
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -154,6 +154,7 @@ public static Socket socket_cliente;
             } catch (IOException e) {
                 e.printStackTrace();
             }
+
 
             initialized = true;
             senderThread = new Thread("MineDuinoSerialSender")
@@ -171,7 +172,7 @@ public static Socket socket_cliente;
                         try { sleep(50 - (System.currentTimeMillis() - time));
 
 
-
+                            serialEvent();
 
 
 
@@ -188,6 +189,8 @@ public static Socket socket_cliente;
             if (initialized) {
                 senderThread.start();
             }
+
+
         }
         }
     @SubscribeEvent
@@ -201,7 +204,7 @@ public static Socket socket_cliente;
     }
 
 
-    public synchronized void serialEvent(SocketReadEvent event){
+    public void serialEvent(){
 
         try
         {
