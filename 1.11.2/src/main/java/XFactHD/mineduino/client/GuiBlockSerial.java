@@ -33,6 +33,8 @@ import net.minecraft.util.text.TextFormatting;
 
 import java.io.IOException;
 
+import static XFactHD.mineduino.common.utils.ConfigHandler.modo;
+
 public class GuiBlockSerial extends GuiContainer
 {
     private TileEntitySerial te;
@@ -60,10 +62,18 @@ public class GuiBlockSerial extends GuiContainer
         this.buttonList.add(new GuiButton(0, guiLeft + 10,   guiTop + 40, 40, 20, "Prior"));
         this.buttonList.add(new GuiButton(1, guiLeft + 170, guiTop + 40, 40, 20, "Next"));
         this.buttonList.add(new GuiButton(2, guiLeft + 90,  guiTop + 80, 40, 20, "Apply"));
-        pinField = new GuiFilteredTextField(3, this.fontRenderer, guiLeft + 115, guiTop + 10, 20, 14, "0123456789A");
+        if(modo.equals("serial")){
+
+            pinField = new GuiFilteredTextField(3, this.fontRenderer, guiLeft + 115, guiTop + 10, 20, 14,"123456789A");
+
+        }else{
+            pinField = new GuiTextField(3, this.fontRenderer, guiLeft + 115, guiTop + 10, 50, 14);
+
+
+        }
         pinField.setCanLoseFocus(false);
         pinField.setFocused(true);
-        pinField.setMaxStringLength(2);
+        //pinField.setMaxStringLength(2);
         pinField.setText(te.getPin());
     }
 
@@ -85,7 +95,14 @@ public class GuiBlockSerial extends GuiContainer
         pinField.updateCursorCounter();
         buttonList.get(0).enabled = mode != SerialHandler.PinMode.NONE;
         buttonList.get(1).enabled = mode != SerialHandler.PinMode.getLastValue(isReceiver());
-        buttonList.get(2).enabled = pinField.getText().length() > 0 && ThreadCommHandler.isValidPin(pinField.getText(), mode) && isValidMode() && canUseMode() && mode != SerialHandler.PinMode.NONE;
+       if(modo.equals("serial")){
+
+           buttonList.get(2).enabled = pinField.getText().length() > 0 && ThreadCommHandler.isValidPin(pinField.getText(), mode) && isValidMode() && canUseMode() && mode != SerialHandler.PinMode.NONE;
+
+       }else{
+
+           buttonList.get(2).enabled = true;
+       }
     }
 
     @Override
