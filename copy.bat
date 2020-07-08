@@ -1,0 +1,1 @@
+xcopy /S /I /Q /Y /F "C:\Users\Roberto\Documents\My projects\MineDuino\1.11.2\build\libs\MineDuino-1.12.2.jar" "C:\Users\Roberto\Documents\My projects\MineDuino\1.11.2\run\mods\MineDuino-1.12.2.jar*"

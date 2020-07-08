@@ -21,10 +21,6 @@ import gnu.io.CommPortIdentifier;
 import gnu.io.SerialPort;
 import gnu.io.SerialPortEvent;
 import gnu.io.SerialPortEventListener;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraftforge.event.entity.EntityJoinWorldEvent;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import scala.actors.Debug;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -131,6 +127,15 @@ public static Socket socket_cliente;
 
         }
         }else{
+            initialized = true;
+            senderThread = new Thread("MineDuinoSerialSender")
+            {
+                private long time = 0;
+
+                @Override
+                @SuppressWarnings("InfiniteLoopStatement")
+                public void run()
+                {
 
              socket_server = null;
             try {
@@ -143,6 +148,12 @@ public static Socket socket_cliente;
 
             } catch (IOException e) {
                 e.printStackTrace();
+                try {
+
+                    socket_server.accept();
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+                }
             }
             try {
                 output = socket_cliente.getOutputStream();
@@ -155,19 +166,11 @@ public static Socket socket_cliente;
                 e.printStackTrace();
             }
 
+                        while (true)
+                        {
 
-            initialized = true;
-            senderThread = new Thread("MineDuinoSerialSender")
-            {
-                private long time = 0;
 
-                @Override
-                @SuppressWarnings("InfiniteLoopStatement")
-                public void run()
-                {
-                    while (true)
-                    {
-                        time = System.currentTimeMillis();
+                            time = System.currentTimeMillis();
                         ThreadCommHandler.executeQueuedTasks();
                         try { sleep(50 - (System.currentTimeMillis() - time));
 
@@ -193,15 +196,6 @@ public static Socket socket_cliente;
 
         }
         }
-    @SubscribeEvent
-    public void onEntityJoinWorld(EntityJoinWorldEvent event) {
-        if (event.getEntity() instanceof EntityPlayer && !event.getEntity().world.isRemote) {
-
-
-            Debug.warning("Debugando.. player entrou no mundo.");
-
-        }
-    }
 
 
     public void serialEvent(){
@@ -279,9 +273,100 @@ if(modo.equals("socket")){
             port.close();
         }
     }
+    public void ReopenSocket(){
 
-    public Exception sendMessage(String pin, PinMode mode, int value)
-    {
+        initialized = true;
+        senderThread = new Thread("MineDuinoSerialSender")
+        {
+            private long time = 0;
+
+            @Override
+            @SuppressWarnings("InfiniteLoopStatement")
+            public void run()
+            {
+
+       // socket_server = null;
+        try {
+            socket_server = new ServerSocket(8888);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        try {
+            socket_cliente = socket_server.accept();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            try {
+
+                socket_server.accept();
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
+        }
+        try {
+            output = socket_cliente.getOutputStream();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        try {
+            input = new BufferedReader(new InputStreamReader(socket_cliente.getInputStream()));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+
+
+
+
+        while (true)
+        {
+
+
+            time = System.currentTimeMillis();
+            ThreadCommHandler.executeQueuedTasks();
+            try { sleep(50 - (System.currentTimeMillis() - time));
+
+
+                serialEvent();
+
+
+
+            }
+            catch (InterruptedException e)
+            {
+                LogHelper.error("Thread '" + Thread.currentThread().getName() + "' was interrupted!");
+                e.printStackTrace();
+            }
+        }
+    }
+};
+
+            if (initialized) {
+                    senderThread.start();
+                    }
+
+                    }
+
+
+
+
+    public void CloseSocket(){
+
+try{
+
+
+   socket_server.close();
+   socket_cliente.close();
+
+}catch (Exception e){
+
+
+
+}
+
+    }
+
+    public Exception sendMessage(String pin, PinMode mode, int value)  {
         Exception exception = null;
 
         if(modo.equals("socket")){
@@ -289,9 +374,14 @@ if(modo.equals("socket")){
             try {
                 String out = pin + ";" + mode.toString() + ";" + Integer.toString(value);
 
-                output.write(out.getBytes());
+    output.write(out.getBytes());
+
+
             } catch (IOException e) {
-                e.printStackTrace();
+                CloseSocket();
+                    ReopenSocket();
+
+
             }
 
         }else {
@@ -313,8 +403,7 @@ if(modo.equals("socket")){
 
     }
 
-    public Exception requestValue(String pin, PinMode mode)
-    {
+    public Exception requestValue(String pin, PinMode mode) {
         Exception exception = null;
         if(modo.equals("socket")){
 
@@ -324,7 +413,10 @@ if(modo.equals("socket")){
                 output.write(out.getBytes());
 
             } catch (IOException e) {
-                e.printStackTrace();
+                CloseSocket();
+
+                ReopenSocket();
+
             }
 
         }else {
@@ -356,7 +448,10 @@ if(modo.equals("socket")){
                 output.write(out.getBytes());
 
             } catch (IOException e) {
-                e.printStackTrace();
+                CloseSocket();
+                ReopenSocket();
+
+
             }
 
         } else {
