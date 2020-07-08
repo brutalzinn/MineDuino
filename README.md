@@ -11,8 +11,8 @@ First of all
 <h3>What's necessary list?</h3>
 
 
-Eclipse or Intellij
-A small world knowledge about minecraft
+Eclipse or Intellij<br>
+A small world knowledge about minecraft<br>
 Java JDK 8(Forge mod loader don't run above java version 8
 
 
