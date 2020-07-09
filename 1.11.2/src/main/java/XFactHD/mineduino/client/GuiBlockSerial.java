@@ -30,6 +30,7 @@ import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TextFormatting;
+import org.lwjgl.input.Keyboard;
 
 import java.io.IOException;
 
@@ -54,7 +55,7 @@ public class GuiBlockSerial extends GuiContainer
     public void initGui()
     {
         super.initGui();
-
+        Keyboard.enableRepeatEvents(true);
         ScaledResolution res = new ScaledResolution(mc);
         guiLeft = (res.getScaledWidth() / 2) - 110;
         guiTop = (res.getScaledHeight() /2) - 55;

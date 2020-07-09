@@ -8,5 +8,5 @@ mode.mineduino:dw.name=Digital Write
 mode.mineduino:ar.name=Analog Read
 mode.mineduino:aw.name=Analog Write
 mode.mineduino:ir.name=Interrupt
-
+mode.mineduino:cmd.name=Command Block
 gui.mineduino:mode.name=Mode:
