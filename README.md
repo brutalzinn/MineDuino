@@ -28,5 +28,5 @@ We uses sockets or serial port connection.
 
 <h3>Usefull links</h3>
 
-To setup intelliji or eclipse, you need read this link: https://minecraft.gamepedia.com/Tutorials/Creating_Forge_mods
+To setup Intellij or eclipse, you need read this link: https://minecraft.gamepedia.com/Tutorials/Creating_Forge_mods
 
