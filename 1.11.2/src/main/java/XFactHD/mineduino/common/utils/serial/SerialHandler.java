@@ -113,36 +113,79 @@ public class SerialHandler implements SerialPortEventListener {
 
             senderThread = new Thread("MineDuinoSerialSender") {
 
+                private long time = 0;
 
                 @Override
                 @SuppressWarnings("InfiniteLoopStatement")
                 public void run() {
 
+                    ServerSocket serverSocket = null;
+                    Socket socket = null;
 
+
+                    try {
+                        serverSocket = new ServerSocket(8888);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+
+                    }
 
                     while (true) {
-
+                        try {
+                            socket = serverSocket.accept();
+                        } catch (IOException e) {
+                            System.out.println("I/O error: " + e);
+                        }
+                        // new thread for a client
                         try {
 
-
-                            ServerSocket ss = new ServerSocket(8888);
-                            System.out.println("Server is Awaiting");
-                            socket_cliente = ss.accept();
-                            Multi t = new Multi(socket_cliente);
-                            t.start();
+                           input = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+                           output = socket.getOutputStream();
 
 
-                      //      ss.close();
                         } catch (IOException e) {
+                            return;
+                        }
+
+                        new EchoThread(socket).start();
+                        time = System.currentTimeMillis();
+                        ThreadCommHandler.executeQueuedTasks();
+                        try { sleep(50 - (System.currentTimeMillis() - time));
+
+
+                            SerialHandler.getSerialHandler().serialEvent();
+
+
+
+                        }
+                        catch (InterruptedException e)
+                        {
+                            LogHelper.error("Thread '" + Thread.currentThread().getName() + "' was interrupted!");
                             e.printStackTrace();
                         }
                     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
                 }
 
 
             };
 
+
                 senderThread.start();
+
 
 
 
@@ -542,44 +585,25 @@ try{
     }
 }
 
-class Multi extends Thread{
-    private Socket s=null;
-    DataInputStream infromClient;
+class EchoThread extends Thread {
+    protected Socket socket;
     private long time = 0;
-    Multi() throws IOException{
-
-
+    public EchoThread(Socket clientSocket) {
+        this.socket = clientSocket;
     }
-    Multi(Socket s) throws IOException{
-        this.s=s;
-        infromClient = new DataInputStream(s.getInputStream());
-    }
-    public void run(){
+
+    public void run() {
 
 
-        try {
-            SerialHandler.getSerialHandler().output = s.getOutputStream();
-        } catch (IOException e) {
-            e.printStackTrace();
+
+        String line;
+        while (true) {
+
+            //     SerialHandler.getSerialHandler().output.write((line + "\n\r").getBytes());
+            //      SerialHandler.getSerialHandler().output.flush();
+
+
+
         }
-        try {
-            SerialHandler.getSerialHandler().input = new BufferedReader(new InputStreamReader(s.getInputStream()));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        time = System.currentTimeMillis();
-        ThreadCommHandler.executeQueuedTasks();
-        try {
-            sleep(50 - (System.currentTimeMillis() - time));
-
-
-            SerialHandler.getSerialHandler().serialEvent();
-
-
-        } catch (InterruptedException e) {
-            LogHelper.error("Thread '" + Thread.currentThread().getName() + "' was interrupted!");
-            e.printStackTrace();
-        }
-
     }
 }
