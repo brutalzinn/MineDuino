@@ -22,10 +22,7 @@ import gnu.io.SerialPort;
 import gnu.io.SerialPortEvent;
 import gnu.io.SerialPortEventListener;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
+import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.Arrays;
@@ -34,8 +31,7 @@ import java.util.Locale;
 
 import static XFactHD.mineduino.common.utils.ConfigHandler.modo;
 
-public class SerialHandler implements SerialPortEventListener
-{
+public class SerialHandler implements SerialPortEventListener {
     private static final SerialHandler INSTANCE = new SerialHandler();
 
     private boolean initialized = false;
@@ -43,159 +39,118 @@ public class SerialHandler implements SerialPortEventListener
 
     private Thread senderThread;
 
-    private BufferedReader input;
-    private OutputStream output;
+    public BufferedReader input;
+    public OutputStream output;
     private static final int TIME_OUT = 5;
     private static final int DATA_RATE = 38400;
-    public static   ServerSocket socket_server;
+    public static ServerSocket socket_server;
     private static volatile boolean portReady = true;
-public static Socket socket_cliente;
-    public static SerialHandler getSerialHandler()
-    {
+    public static Socket socket_cliente;
+
+    public static SerialHandler getSerialHandler() {
         return INSTANCE;
     }
 
-    public void initialize()
-    {
+    public void initialize() {
         CommPortIdentifier portId = null;
         Enumeration portEnum = CommPortIdentifier.getPortIdentifiers();
-        if(modo.equals("serial")){
-        while (portEnum.hasMoreElements())
-        {
-            CommPortIdentifier currPortId = (CommPortIdentifier) portEnum.nextElement();
-            if (currPortId.getName().equals(ConfigHandler.port))
-            {
-                portId = currPortId;
-                break;
-            }
-        }
-        if (portId == null)
-        {
-            LogHelper.error("Could not find COM port! Is your Arduino connected?");
-            return;
-        }
-
-        try
-        {
-
-            port = (SerialPort) portId.open("MineDuino", TIME_OUT);
-            port.setSerialPortParams(DATA_RATE, SerialPort.DATABITS_8, SerialPort.STOPBITS_1, SerialPort.PARITY_NONE);
-
-
-
-
-
-            input = new BufferedReader(new InputStreamReader(port.getInputStream()));
-            output = port.getOutputStream();
-
-            port.addEventListener(this);
-            port.notifyOnDataAvailable(true);
-
-            initialized = true;
-
-        }
-        catch (Exception e)
-        {
-            LogHelper.error("Failed to open the serial port!");
-            e.printStackTrace();
-        }
-
-        senderThread = new Thread("MineDuinoSerialSender")
-        {
-            private long time = 0;
-
-            @Override
-            @SuppressWarnings("InfiniteLoopStatement")
-            public void run()
-            {
-                while (true)
-                {
-                    time = System.currentTimeMillis();
-                    ThreadCommHandler.executeQueuedTasks();
-                    try { sleep(50 - (System.currentTimeMillis() - time)); }
-                    catch (InterruptedException e)
-                    {
-                        LogHelper.error("Thread '" + Thread.currentThread().getName() + "' was interrupted!");
-                        e.printStackTrace();
-                    }
+        if (modo.equals("serial")) {
+            while (portEnum.hasMoreElements()) {
+                CommPortIdentifier currPortId = (CommPortIdentifier) portEnum.nextElement();
+                if (currPortId.getName().equals(ConfigHandler.port)) {
+                    portId = currPortId;
+                    break;
                 }
             }
-        };
-        if (initialized) { senderThread.start();
+            if (portId == null) {
+                LogHelper.error("Could not find COM port! Is your Arduino connected?");
+                return;
+            }
+
+            try {
+
+                port = (SerialPort) portId.open("MineDuino", TIME_OUT);
+                port.setSerialPortParams(DATA_RATE, SerialPort.DATABITS_8, SerialPort.STOPBITS_1, SerialPort.PARITY_NONE);
 
 
+                input = new BufferedReader(new InputStreamReader(port.getInputStream()));
+                output = port.getOutputStream();
 
-        }
-        }else{
-            initialized = true;
-            senderThread = new Thread("MineDuinoSerialSender")
-            {
+                port.addEventListener(this);
+                port.notifyOnDataAvailable(true);
+
+                initialized = true;
+
+            } catch (Exception e) {
+                LogHelper.error("Failed to open the serial port!");
+                e.printStackTrace();
+            }
+
+            senderThread = new Thread("MineDuinoSerialSender") {
                 private long time = 0;
 
                 @Override
                 @SuppressWarnings("InfiniteLoopStatement")
-                public void run()
-                {
-
-             socket_server = null;
-            try {
-                socket_server = new ServerSocket(8888);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            try {
-                socket_cliente = socket_server.accept();
-
-            } catch (IOException e) {
-                e.printStackTrace();
-                try {
-
-                    socket_server.accept();
-                } catch (IOException ex) {
-                    ex.printStackTrace();
-                }
-            }
-            try {
-                output = socket_cliente.getOutputStream();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            try {
-                input = new BufferedReader(new InputStreamReader(socket_cliente.getInputStream()));
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
-                        while (true)
-                        {
-
-
-                            time = System.currentTimeMillis();
+                public void run() {
+                    while (true) {
+                        time = System.currentTimeMillis();
                         ThreadCommHandler.executeQueuedTasks();
-                        try { sleep(50 - (System.currentTimeMillis() - time));
-
-
-                            serialEvent();
-
-
-
-                        }
-                        catch (InterruptedException e)
-                        {
+                        try {
+                            sleep(50 - (System.currentTimeMillis() - time));
+                        } catch (InterruptedException e) {
                             LogHelper.error("Thread '" + Thread.currentThread().getName() + "' was interrupted!");
                             e.printStackTrace();
                         }
                     }
                 }
             };
-
             if (initialized) {
                 senderThread.start();
+
+
             }
+        } else {
+
+            senderThread = new Thread("MineDuinoSerialSender") {
+
+
+                @Override
+                @SuppressWarnings("InfiniteLoopStatement")
+                public void run() {
+
+
+
+                    while (true) {
+
+                        try {
+
+
+                            ServerSocket ss = new ServerSocket(8888);
+                            System.out.println("Server is Awaiting");
+                            socket_cliente = ss.accept();
+                            Multi t = new Multi(socket_cliente);
+                            t.start();
+
+
+                      //      ss.close();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+
+
+            };
+
+                senderThread.start();
+
 
 
         }
-        }
+    }
+
+
+
 
 
     public void serialEvent(){
@@ -378,8 +333,8 @@ try{
 
 
             } catch (IOException e) {
-                CloseSocket();
-                    ReopenSocket();
+              //  CloseSocket();
+               //     ReopenSocket();
 
 
             }
@@ -413,9 +368,9 @@ try{
                 output.write(out.getBytes());
 
             } catch (IOException e) {
-                CloseSocket();
+         //       CloseSocket();
 
-                ReopenSocket();
+        //        ReopenSocket();
 
             }
 
@@ -448,8 +403,8 @@ try{
                 output.write(out.getBytes());
 
             } catch (IOException e) {
-                CloseSocket();
-                ReopenSocket();
+           //     CloseSocket();
+          //      ReopenSocket();
 
 
             }
@@ -584,5 +539,47 @@ try{
         {
             return receiver ? IR : AW;
         }
+    }
+}
+
+class Multi extends Thread{
+    private Socket s=null;
+    DataInputStream infromClient;
+    private long time = 0;
+    Multi() throws IOException{
+
+
+    }
+    Multi(Socket s) throws IOException{
+        this.s=s;
+        infromClient = new DataInputStream(s.getInputStream());
+    }
+    public void run(){
+
+
+        try {
+            SerialHandler.getSerialHandler().output = s.getOutputStream();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        try {
+            SerialHandler.getSerialHandler().input = new BufferedReader(new InputStreamReader(s.getInputStream()));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        time = System.currentTimeMillis();
+        ThreadCommHandler.executeQueuedTasks();
+        try {
+            sleep(50 - (System.currentTimeMillis() - time));
+
+
+            SerialHandler.getSerialHandler().serialEvent();
+
+
+        } catch (InterruptedException e) {
+            LogHelper.error("Thread '" + Thread.currentThread().getName() + "' was interrupted!");
+            e.printStackTrace();
+        }
+
     }
 }
