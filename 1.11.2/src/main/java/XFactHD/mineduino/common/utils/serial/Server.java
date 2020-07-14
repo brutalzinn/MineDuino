@@ -1,5 +1,7 @@
 package XFactHD.mineduino.common.utils.serial;
 
+import XFactHD.mineduino.common.utils.LogHelper;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -8,6 +10,8 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
+
+import static java.lang.Thread.sleep;
 
 public class Server implements Runnable {
     private ServerSocket serverSocket;
@@ -74,46 +78,77 @@ public class Server implements Runnable {
         }
         return -1;
     }
+    public void SyncronizeSendMessage(String message){
 
+        ChatServerThread participant = null;
+
+        for (int i = 0; i < clients.size(); i++) {
+
+            participant = clients.get(findClientByUserId(clients.get(i).getID()));
+
+            if (participant != null) {
+                participant.send(message);
+
+            }
+        }
+    }
+    private long time = 0;
     public synchronized void handle(int ID, String input) throws IOException {
 
 
 
-        if(clients.get(findClient(ID)).getUser_id()==-1){
+       if(clients.get(findClient(ID)).getUser_id()==-1){
             try {
               //  int user_id = obj.getInt("user_id");
                 clients.get(findClient(ID)).setUser_id(ID);
             } catch (Exception ignored) {}
         }
-        else{
-            try {
-
-                ChatServerThread participant = null;
-
-                for (int i = 0; i < clients.size(); i++) {
-                try{
+        time = System.currentTimeMillis();
+        ThreadCommHandler.executeQueuedTasks();
+        try { sleep(50 - (System.currentTimeMillis() - time));
 
 
-                            participant = clients.get(findClientByUserId(clients.get(i).getID()));
-
-                        if(participant!=null) {
-                            participant.send(input);
-
-                        }
+            SerialHandler.getSerialHandler().serialEvent(input);
 
 
-                }catch (Exception ignored){}
 
-
-                remove(i);
-
-            }
-            } catch (Exception ignored) {
-                ignored.printStackTrace();
-
-            }
         }
-
+        catch (InterruptedException e)
+        {
+            LogHelper.error("Thread '" + Thread.currentThread().getName() + "' was interrupted!");
+            e.printStackTrace();
+        }
+       // SerialHandler.getSerialHandler().SerialEvent(input);
+//        else{
+//            try {
+//
+//                ChatServerThread participant = null;
+//
+//                for (int i = 0; i < clients.size(); i++) {
+//                try{
+// if(clients.get(i).getUser_id() != ID) {
+//
+//     participant = clients.get(findClientByUserId(clients.get(i).getID()));
+//
+//     if (participant != null) {
+//         participant.send(input);
+//
+//     }
+// }
+//
+//
+//                }catch (Exception ignored){}
+//
+//
+//
+//
+//            }
+//            } catch (Exception ignored) {
+//                ignored.printStackTrace();
+//
+//            }
+//        }*/
+      //  SyncronizeSendMessage(input);
         System.out.println("User " + clients.get(findClient(ID)).getUser_id() + ": " + input);
     }
 

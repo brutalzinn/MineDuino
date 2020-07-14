@@ -47,6 +47,7 @@ public class SerialHandler implements SerialPortEventListener
     private OutputStream output;
     private static final int TIME_OUT = 5;
     private static final int DATA_RATE = 38400;
+    private Server ServerClass = new Server();
     public static   ServerSocket socket_server;
     private static volatile boolean portReady = true;
 public static Socket socket_cliente;
@@ -139,8 +140,8 @@ public static Socket socket_cliente;
                 @SuppressWarnings("InfiniteLoopStatement")
                 public void run()
                 {
-                    Server teste = new Server();
-                    teste.run();
+
+                    ServerClass.run();
 
 
 
@@ -149,26 +150,8 @@ public static Socket socket_cliente;
 
 
 
-                    while (true)
-                        {
 
 
-                            time = System.currentTimeMillis();
-                        ThreadCommHandler.executeQueuedTasks();
-                        try { sleep(50 - (System.currentTimeMillis() - time));
-
-
-                            serialEvent();
-
-
-
-                        }
-                        catch (InterruptedException e)
-                        {
-                            LogHelper.error("Thread '" + Thread.currentThread().getName() + "' was interrupted!");
-                            e.printStackTrace();
-                        }
-                    }
                 }
             };
 
@@ -181,15 +164,15 @@ public static Socket socket_cliente;
         }
 
 
-    public void serialEvent(){
+    public void serialEvent(String message){
 
         try
         {
-            if (input.ready())
+            if (message.length() > 0 )
             {
                 portReady = false;
                 String[] vals = new String[] {"none","dr","drp","dw","ar","aw","ir"};
-                String data = input.readLine();
+                String data = message;
                 System.out.println("DataIn: " + data);
                 String[] parts = data.split(";");
                 if (Arrays.asList(vals).contains(parts[1]) && parts.length == 3)
@@ -310,7 +293,7 @@ if(modo.equals("socket")){
             try { sleep(50 - (System.currentTimeMillis() - time));
 
 
-                serialEvent();
+          //      serialEvent();
 
 
 
@@ -354,18 +337,13 @@ try{
 
         if(modo.equals("socket")){
 
-            try {
+
                 String out = pin + ";" + mode.toString() + ";" + Integer.toString(value);
 
-    output.write(out.getBytes());
+   // output.write(out.getBytes());
+                ServerClass.SyncronizeSendMessage(out);
 
 
-            } catch (IOException e) {
-                CloseSocket();
-                    ReopenSocket();
-
-
-            }
 
         }else {
 
@@ -390,17 +368,12 @@ try{
         Exception exception = null;
         if(modo.equals("socket")){
 
-            try {
+
                 String out = pin + ";" + mode.toString() + ";-1";
 
-                output.write(out.getBytes());
+            ServerClass.SyncronizeSendMessage(out);
 
-            } catch (IOException e) {
-                CloseSocket();
 
-                ReopenSocket();
-
-            }
 
         }else {
 
@@ -426,20 +399,15 @@ try{
         if (modo.equals("socket")) {
 
 
-            try {
+
                 String out = pin + ";ir;" + (active ? "1" : "0");
-                output.write(out.getBytes());
-
-            } catch (IOException e) {
-                CloseSocket();
-                ReopenSocket();
+                ServerClass.SyncronizeSendMessage(out);
 
 
-            }
 
         } else {
 
-        }
+
         checkPortReady();
         try {
             String out = pin + ";ir;" + (active ? "1" : "0");
@@ -447,7 +415,7 @@ try{
         } catch (IOException e) {
             exception = e;
         }
-
+    }
         return exception;
     }
 
