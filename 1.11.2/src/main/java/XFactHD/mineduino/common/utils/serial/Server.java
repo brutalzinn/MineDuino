@@ -1,6 +1,5 @@
 package XFactHD.mineduino.common.utils.serial;
 
-import org.json.JSONObject;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -25,7 +24,7 @@ public class Server implements Runnable {
 
     public Server() {
         try {
-            serverSocket = new ServerSocket(5559);
+            serverSocket = new ServerSocket(8888);
             stdIn = new BufferedReader(new InputStreamReader(System.in));
         } catch (Exception e) {
             e.printStackTrace();
@@ -77,42 +76,44 @@ public class Server implements Runnable {
     }
 
     public synchronized void handle(int ID, String input) throws IOException {
-        JSONObject obj = null;
-        try{
-            obj = new JSONObject(input);
-        }
-        catch (Exception e){
-            System.out.println("Incorrect message");
-        }
+
+
 
         if(clients.get(findClient(ID)).getUser_id()==-1){
             try {
-                int user_id = obj.getInt("user_id");
-                clients.get(findClient(ID)).setUser_id(user_id);
+              //  int user_id = obj.getInt("user_id");
+                clients.get(findClient(ID)).setUser_id(ID);
             } catch (Exception ignored) {}
         }
         else{
             try {
-                JSONObject participants = obj.getJSONObject("participants");
-                ChatServerThread first_participant = null;
-                ChatServerThread second_participant = null;
 
+                ChatServerThread participant = null;
+
+                for (int i = 0; i < clients.size(); i++) {
                 try{
-                    first_participant = clients.get(findClientByUserId(participants.getInt("1")));
-                }catch (Exception ignored){}
-                try{
-                    second_participant = clients.get(findClientByUserId(participants.getInt("2")));
+
+
+                            participant = clients.get(findClientByUserId(clients.get(i).getID()));
+
+                        if(participant!=null) {
+                            participant.send(input);
+
+                        }
+
+
                 }catch (Exception ignored){}
 
-                if(first_participant!=null)
-                    first_participant.send(obj);
-                if(second_participant!=null)
-                    second_participant.send(obj);
 
+                remove(i);
+
+            }
             } catch (Exception ignored) {
                 ignored.printStackTrace();
+
             }
         }
+
         System.out.println("User " + clients.get(findClient(ID)).getUser_id() + ": " + input);
     }
 

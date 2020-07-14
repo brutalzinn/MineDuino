@@ -1,8 +1,10 @@
 package XFactHD.mineduino.common.utils.serial;
 
-import org.json.JSONObject;
-import java.net.*;
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import java.net.Socket;
 
 public class ChatServerThread extends Thread {
     private Server server = null;
@@ -21,8 +23,8 @@ public class ChatServerThread extends Thread {
         ID = socket.getPort();
     }
 
-    public void send(JSONObject msg) {
-        streamOut.println(msg.toString());
+    public void send(String msg) {
+        streamOut.println(msg);
     }
 
     public int getID() {

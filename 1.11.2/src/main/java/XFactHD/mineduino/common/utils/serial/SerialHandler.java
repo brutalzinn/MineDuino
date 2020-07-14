@@ -127,6 +127,9 @@ public static Socket socket_cliente;
 
         }
         }else{
+
+
+
             initialized = true;
             senderThread = new Thread("MineDuinoSerialSender")
             {
@@ -136,37 +139,17 @@ public static Socket socket_cliente;
                 @SuppressWarnings("InfiniteLoopStatement")
                 public void run()
                 {
+                    Server teste = new Server();
+                    teste.run();
 
-             socket_server = null;
-            try {
-                socket_server = new ServerSocket(8888);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            try {
-                socket_cliente = socket_server.accept();
 
-            } catch (IOException e) {
-                e.printStackTrace();
-                try {
 
-                    socket_server.accept();
-                } catch (IOException ex) {
-                    ex.printStackTrace();
-                }
-            }
-            try {
-                output = socket_cliente.getOutputStream();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            try {
-                input = new BufferedReader(new InputStreamReader(socket_cliente.getInputStream()));
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
 
-                        while (true)
+
+
+
+
+                    while (true)
                         {
 
 
