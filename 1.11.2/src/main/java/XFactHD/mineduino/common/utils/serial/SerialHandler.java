@@ -144,11 +144,18 @@ public static Socket socket_cliente;
                     ServerClass.run();
 
 
+while(true) {
+    time = System.currentTimeMillis();
+    ThreadCommHandler.executeQueuedTasks();
+    try {
+        sleep(50 - (System.currentTimeMillis() - time));
+    } catch (InterruptedException e) {
+        LogHelper.error("Thread '" + Thread.currentThread().getName() + "' was interrupted!");
+        e.printStackTrace();
+    }
 
 
-
-
-
+}
 
 
 
