@@ -122,8 +122,8 @@ public static Socket socket_cliente;
                 }
             }
         };
-        if (initialized) { senderThread.start();
-
+        if (initialized) {
+            senderThread.start();
 
 
         }
@@ -141,14 +141,15 @@ public static Socket socket_cliente;
                 public void run()
                 {
                     ServerClass  = new Server();
-                    ServerClass.run();
-                    ServerClass.SyncronizeSendMessage("sincronizando..");
+
+
 
 
 while(true) {
     time = System.currentTimeMillis();
     ThreadCommHandler.executeQueuedTasks();
     try {
+        serialEvent();
         sleep(50 - (System.currentTimeMillis() - time));
     } catch (InterruptedException e) {
         LogHelper.error("Thread '" + Thread.currentThread().getName() + "' was interrupted!");
@@ -157,8 +158,6 @@ while(true) {
 
 
 }
-
-
 
                 }
             };
@@ -172,15 +171,14 @@ while(true) {
         }
 
 
-    public void serialEvent(String message){
+    public void serialEvent(){
 
         try
         {
-            if (message.length() > 0 )
-            {
+
                 portReady = false;
                 String[] vals = new String[] {"none","dr","drp","dw","ar","aw","ir"};
-                String data = message;
+                String data = ServerClass.SyncronizereadMessage();
                 System.out.println("DataIn: " + data);
                 String[] parts = data.split(";");
                 if (Arrays.asList(vals).contains(parts[1]) && parts.length == 3)
@@ -188,7 +186,7 @@ while(true) {
                     ThreadCommHandler.receiveData(parts[0], PinMode.fromString(parts[1]), Integer.valueOf(parts[2]));
                 }
                 portReady = true;
-            }
+
         }
         catch (Exception e)
         {

@@ -27,6 +27,19 @@ public class ChatServerThread extends Thread {
         streamOut.write(msg);
 
     }
+    public String read(){
+
+String result = null;
+        try {
+            result= streamIn.readLine();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return result;
+
+    }
+
+
 
     public int getID() {
         return ID;

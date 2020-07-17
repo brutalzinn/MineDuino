@@ -86,7 +86,6 @@ public class Server implements Runnable {
 
 
                     cliente.send(message);
-                    cliente.send("\n\r");
                     cliente.cliente_flush();
                     System.out.println("GET MESSAGE to send: " + message + " ID "+ cliente.getUser_id());
 
@@ -96,6 +95,28 @@ public class Server implements Runnable {
 
 
     }
+    public String SyncronizereadMessage(){
+
+
+
+String result = null;
+        for(  ChatServerThread cliente  : clients){
+
+            try {
+
+                ThreadCommHandler.executeQueuedTasks();
+
+
+
+               result =  cliente.read();
+                System.out.println("GET MESSAGE to read: " + result + " ID "+ cliente.getUser_id());
+
+            } catch (Exception ignored) {}
+        }
+
+
+return result;
+    }
     private long time = 0;
     public synchronized void handle(int ID, String input) throws IOException {
 
@@ -104,48 +125,7 @@ public class Server implements Runnable {
 
 
 
-        ThreadCommHandler.executeQueuedTasks();
 
-
-
-            SerialHandler.getSerialHandler().serialEvent(input);
-
-
-
-
-
-
-       // SerialHandler.getSerialHandler().SerialEvent(input);
-//        else{
-//            try {
-//
-//                ChatServerThread participant = null;
-//
-//                for (int i = 0; i < clients.size(); i++) {
-//                try{
-// if(clients.get(i).getUser_id() != ID) {
-//
-//     participant = clients.get(findClientByUserId(clients.get(i).getID()));
-//
-//     if (participant != null) {
-//         participant.send(input);
-//
-//     }
-// }
-//
-//
-//                }catch (Exception ignored){}
-//
-//
-//
-//
-//            }
-//            } catch (Exception ignored) {
-//                ignored.printStackTrace();
-//
-//            }
-//        }*/
-      //  SyncronizeSendMessage(input);
         System.out.println("User " + clients.get(findClient(ID)).getUser_id() + ": " + input);
     }
 
