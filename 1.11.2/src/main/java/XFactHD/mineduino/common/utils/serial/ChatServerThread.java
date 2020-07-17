@@ -24,7 +24,8 @@ public class ChatServerThread extends Thread {
     }
 
     public void send(String msg) {
-        streamOut.println(msg);
+        streamOut.write(msg);
+
     }
 
     public int getID() {
@@ -48,7 +49,7 @@ public class ChatServerThread extends Thread {
 
     public void open() throws IOException {
         streamIn = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-        streamOut = new PrintWriter(socket.getOutputStream(), true);
+        streamOut = new PrintWriter(socket.getOutputStream());
     }
 
     public void close() throws IOException {
@@ -57,6 +58,10 @@ public class ChatServerThread extends Thread {
         if (streamOut != null) streamOut.close();
     }
 
+    public void cliente_flush(){
+        streamOut.flush();
+
+    }
     public void end() {
         stop = true;
     }

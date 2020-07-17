@@ -76,30 +76,32 @@ public class Server implements Runnable {
     }
     public void SyncronizeSendMessage(String message){
 
-        ChatServerThread participant = null;
 
-        for (int i = 0; i < clients.size(); i++) {
 
-            participant = clients.get(findClientByUserId(clients.get(i).getID()));
 
-            if (participant != null) {
-                ThreadCommHandler.executeQueuedTasks();
-                participant.send(message);
+            for(  ChatServerThread cliente  : clients){
+                try {
 
+                    ThreadCommHandler.executeQueuedTasks();
+
+
+                    cliente.send(message);
+                    cliente.send("\n\r");
+                    cliente.cliente_flush();
+                    System.out.println("GET MESSAGE to send: " + message + " ID "+ cliente.getUser_id());
+
+                } catch (Exception ignored) {}
             }
-        }
+
+
+
     }
     private long time = 0;
     public synchronized void handle(int ID, String input) throws IOException {
 
 
 
-       if(clients.get(findClient(ID)).getUser_id()==-1){
-            try {
-              //  int user_id = obj.getInt("user_id");
-                clients.get(findClient(ID)).setUser_id(ID);
-            } catch (Exception ignored) {}
-        }
+
 
 
         ThreadCommHandler.executeQueuedTasks();

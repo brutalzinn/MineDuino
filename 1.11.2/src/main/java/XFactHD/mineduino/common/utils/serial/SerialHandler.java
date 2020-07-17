@@ -47,7 +47,7 @@ public class SerialHandler implements SerialPortEventListener
     private OutputStream output;
     private static final int TIME_OUT = 5;
     private static final int DATA_RATE = 38400;
-    private Server ServerClass = new Server();
+    private Server ServerClass;
     public static   ServerSocket socket_server;
     private static volatile boolean portReady = true;
 public static Socket socket_cliente;
@@ -140,8 +140,9 @@ public static Socket socket_cliente;
                 @SuppressWarnings("InfiniteLoopStatement")
                 public void run()
                 {
-
+                    ServerClass  = new Server();
                     ServerClass.run();
+                    ServerClass.SyncronizeSendMessage("sincronizando..");
 
 
 while(true) {
@@ -162,9 +163,9 @@ while(true) {
                 }
             };
 
-            if (initialized) {
+
                 senderThread.start();
-            }
+
 
 
         }
