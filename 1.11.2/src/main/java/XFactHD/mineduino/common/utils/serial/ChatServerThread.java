@@ -1,16 +1,13 @@
 package XFactHD.mineduino.common.utils.serial;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
+import java.io.*;
 import java.net.Socket;
 
 public class ChatServerThread extends Thread {
     private Server server = null;
     private Socket socket = null;
     private int ID = -1;
-    private PrintWriter streamOut = null;
+    private OutputStream streamOut = null;
     private BufferedReader streamIn = null;
     private boolean stop = false;
 
@@ -24,7 +21,11 @@ public class ChatServerThread extends Thread {
     }
 
     public void send(String msg) {
-        streamOut.write(msg);
+        try {
+            streamOut.write(msg.getBytes());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
     }
     public String read(){
@@ -62,7 +63,8 @@ String result = null;
 
     public void open() throws IOException {
         streamIn = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-        streamOut = new PrintWriter(socket.getOutputStream());
+      //  streamOut = new PrintWriter(socket.getOutputStream());
+        streamOut = socket.getOutputStream();
     }
 
     public void close() throws IOException {
@@ -72,7 +74,7 @@ String result = null;
     }
 
     public void cliente_flush(){
-        streamOut.flush();
+       // streamOut.flush();
 
     }
     public void end() {
