@@ -59,11 +59,15 @@ String result = null;
 
 
             try {
+<<<<<<< Updated upstream
 
 
 
 
              //   server.handle(ID, streamIn.readLine());
+=======
+              //  server.handle(ID, streamIn.readLine());
+>>>>>>> Stashed changes
             } catch (Exception ioe) {
                 System.out.println(ID + " ERROR reading: " + ioe.getMessage());
                 server.remove(ID);
@@ -90,6 +94,7 @@ String result = null;
        // streamOut.flush();
 
     }
+
     public void end() {
         stop = true;
     }

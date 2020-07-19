@@ -17,7 +17,7 @@ public class Server implements Runnable {
     private Socket clientSocket;
     private PrintWriter out;
     private BufferedReader in;
-    private BufferedReader stdIn;
+  //  private BufferedReader stdIn;
 
     private Thread thread = null;
     private boolean stop = false;
@@ -28,7 +28,8 @@ public class Server implements Runnable {
     public Server() {
         try {
             serverSocket = new ServerSocket(8888);
-          //  stdIn = new BufferedReader(new InputStreamReader(System.in));
+
+
         } catch (Exception e) {
             e.printStackTrace();
             return;
@@ -54,7 +55,7 @@ public class Server implements Runnable {
 
     public void addThread(Socket socket) {
         System.out.println("Client accepted: " + socket);
-        if(Count() > 0) {
+  if(Count() > 0){
             time = System.currentTimeMillis();
             ThreadCommHandler.executeQueuedTasks();
             try {
@@ -115,11 +116,10 @@ public class Server implements Runnable {
 
 
 
-String result = null;
+String result = "0;0;0";
         for(  ChatServerThread cliente  : clients){
 
             try {
-
 
 
 
@@ -161,15 +161,16 @@ return result;
             thread.start();
         }
     }
-public int Count() {
 
 
-  return clients.size();
-    }
     public void stop() {
         stop = true;
     }
+    public int Count(){
 
+
+        return clients.size();
+    }
     void afficheClients(){
         for(ChatServerThread c : clients){
             System.out.println("thread ID: "+c.getID()+" | User Id: " + c.getUser_id());

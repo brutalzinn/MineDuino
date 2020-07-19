@@ -145,8 +145,21 @@ public static Socket socket_cliente;
                         public void run()
                         {
 
+<<<<<<< Updated upstream
                         while (true) {
                             if(ServerClass.Count() > 0) {
+=======
+while(true) {
+    //time = System.currentTimeMillis();
+    ThreadCommHandler.executeQueuedTasks();
+    try {
+        serialEvent();
+
+    } catch (Exception e) {
+        LogHelper.error("Thread '" + Thread.currentThread().getName() + "' was interrupted!");
+        e.printStackTrace();
+    }
+>>>>>>> Stashed changes
 
 
                         }
@@ -169,6 +182,7 @@ public static Socket socket_cliente;
 
         try
         {
+<<<<<<< Updated upstream
 
 
     portReady = false;
@@ -184,6 +198,21 @@ public static Socket socket_cliente;
 
 
 
+=======
+           if( ServerClass.Count() > 0)
+                portReady = false;
+                String[] vals = new String[] {"none","dr","drp","dw","ar","aw","ir"};
+            if(ServerClass.SyncronizereadMessage() != null) {
+                String data = ServerClass.SyncronizereadMessage();
+
+                System.out.println("DataIn: " + data);
+                String[] parts = data.split(";");
+                if (Arrays.asList(vals).contains(parts[1]) && parts.length == 3) {
+                    ThreadCommHandler.receiveData(parts[0], PinMode.fromString(parts[1]), Integer.valueOf(parts[2]));
+                }
+                portReady = true;
+            }
+>>>>>>> Stashed changes
         }
         catch (Exception e)
         {
