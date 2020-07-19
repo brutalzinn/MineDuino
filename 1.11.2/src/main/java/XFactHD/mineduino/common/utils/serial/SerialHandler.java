@@ -147,15 +147,7 @@ public static Socket socket_cliente;
 
                         while (true) {
                             if(ServerClass.Count() > 0) {
-                            time = System.currentTimeMillis();
-                            ThreadCommHandler.executeQueuedTasks();
-                            try {
-                                serialEvent();
-                                sleep(Math.abs(50 - (System.currentTimeMillis() - time)));
-                            } catch (InterruptedException e) {
-                                LogHelper.error("Thread '" + Thread.currentThread().getName() + "' was interrupted!");
-                                e.printStackTrace();
-                            }
+
 
                         }
                         }
@@ -165,7 +157,7 @@ public static Socket socket_cliente;
             };
 
 
-               // senderThread.start();
+          //    senderThread.start();
 
 
 

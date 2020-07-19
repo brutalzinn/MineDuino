@@ -1,5 +1,7 @@
 package XFactHD.mineduino.common.utils.serial;
 
+import XFactHD.mineduino.common.utils.LogHelper;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -7,6 +9,8 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
+
+import static java.lang.Thread.sleep;
 
 public class Server implements Runnable {
     private ServerSocket serverSocket;
@@ -50,6 +54,17 @@ public class Server implements Runnable {
 
     public void addThread(Socket socket) {
         System.out.println("Client accepted: " + socket);
+        if(Count() > 0) {
+            time = System.currentTimeMillis();
+            ThreadCommHandler.executeQueuedTasks();
+            try {
+                SerialHandler.getSerialHandler().serialEvent();
+                sleep(Math.abs(50 - (System.currentTimeMillis() - time)));
+            } catch (InterruptedException e) {
+                LogHelper.error("Thread '" + Thread.currentThread().getName() + "' was interrupted!");
+                e.printStackTrace();
+            }
+        }
         client = new ChatServerThread(this, socket);
         try {
             client.open();
@@ -85,7 +100,7 @@ public class Server implements Runnable {
 
 
 
-cliente.open();
+//cliente.open();
                     cliente.send(message);
              //       cliente.cliente_flush();
                     System.out.println("GET MESSAGE to send: " + message + " ID "+ cliente.getUser_id());

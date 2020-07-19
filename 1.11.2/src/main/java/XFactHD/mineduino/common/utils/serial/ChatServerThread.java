@@ -54,10 +54,6 @@ String result = null;
         while (true) {
 
 
-
-                ThreadCommHandler.executeQueuedTasks();
-
-                    SerialHandler.getSerialHandler().serialEvent();
                  //   sleep(Math.abs((System.currentTimeMillis() - time)));
 
 
