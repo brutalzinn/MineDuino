@@ -132,38 +132,40 @@ public static Socket socket_cliente;
 
 
             initialized = true;
-            senderThread = new Thread("MineDuinoSerialSender")
-            {
-                private long time = 0;
 
-                @Override
-                @SuppressWarnings("InfiniteLoopStatement")
-                public void run()
-                {
                     ServerClass  = new Server();
 
 
+                    senderThread = new Thread("MineDuinoSerialSender")
+                    {
+                        private long time = 0;
 
+                        @Override
+                        @SuppressWarnings("InfiniteLoopStatement")
+                        public void run()
+                        {
 
-while(true) {
-    time = System.currentTimeMillis();
-    ThreadCommHandler.executeQueuedTasks();
-    try {
-        serialEvent();
-        sleep(50 - (System.currentTimeMillis() - time));
-    } catch (InterruptedException e) {
-        LogHelper.error("Thread '" + Thread.currentThread().getName() + "' was interrupted!");
-        e.printStackTrace();
-    }
+                        while (true) {
+                            if(ServerClass.Count() > 0) {
+                            time = System.currentTimeMillis();
+                            ThreadCommHandler.executeQueuedTasks();
+                            try {
+                                serialEvent();
+                                sleep(Math.abs(50 - (System.currentTimeMillis() - time)));
+                            } catch (InterruptedException e) {
+                                LogHelper.error("Thread '" + Thread.currentThread().getName() + "' was interrupted!");
+                                e.printStackTrace();
+                            }
 
+                        }
+                        }
 
-}
 
                 }
             };
 
 
-                senderThread.start();
+               // senderThread.start();
 
 
 
@@ -176,16 +178,19 @@ while(true) {
         try
         {
 
-                portReady = false;
-                String[] vals = new String[] {"none","dr","drp","dw","ar","aw","ir"};
-                String data = ServerClass.SyncronizereadMessage();
-                System.out.println("DataIn: " + data);
-                String[] parts = data.split(";");
-                if (Arrays.asList(vals).contains(parts[1]) && parts.length == 3)
-                {
-                    ThreadCommHandler.receiveData(parts[0], PinMode.fromString(parts[1]), Integer.valueOf(parts[2]));
-                }
-                portReady = true;
+
+    portReady = false;
+    String[] vals = new String[] {"none","dr","drp","dw","ar","aw","ir"};
+    String data = ServerClass.SyncronizereadMessage();
+    System.out.println("DataIn: " + data);
+    String[] parts = data.split(";");
+    if (Arrays.asList(vals).contains(parts[1]) && parts.length == 3)
+    {
+        ThreadCommHandler.receiveData(parts[0], PinMode.fromString(parts[1]), Integer.valueOf(parts[2]));
+    }
+    portReady = true;
+
+
 
         }
         catch (Exception e)

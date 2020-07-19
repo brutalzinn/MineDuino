@@ -1,6 +1,9 @@
 package XFactHD.mineduino.common.utils.serial;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.net.Socket;
 
 public class ChatServerThread extends Thread {
@@ -45,19 +48,33 @@ String result = null;
     public int getID() {
         return ID;
     }
-
+    private long time = 0;
     @Override
     public void run() {
         while (true) {
+
+
+
+                ThreadCommHandler.executeQueuedTasks();
+
+                    SerialHandler.getSerialHandler().serialEvent();
+                 //   sleep(Math.abs((System.currentTimeMillis() - time)));
+
+
+
             try {
-                server.handle(ID, streamIn.readLine());
-            } catch (IOException ioe) {
+
+
+
+
+             //   server.handle(ID, streamIn.readLine());
+            } catch (Exception ioe) {
                 System.out.println(ID + " ERROR reading: " + ioe.getMessage());
                 server.remove(ID);
-                stop = true;
+            //    stop = true;
             }
-            if (stop)
-                break;
+            //if (stop)
+              //  break;
         }
     }
 

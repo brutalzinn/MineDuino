@@ -2,7 +2,6 @@ package XFactHD.mineduino.common.utils.serial;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -25,7 +24,7 @@ public class Server implements Runnable {
     public Server() {
         try {
             serverSocket = new ServerSocket(8888);
-            stdIn = new BufferedReader(new InputStreamReader(System.in));
+          //  stdIn = new BufferedReader(new InputStreamReader(System.in));
         } catch (Exception e) {
             e.printStackTrace();
             return;
@@ -40,6 +39,8 @@ public class Server implements Runnable {
             try {
                 System.out.println("Waiting for a client ...");
                 addThread(serverSocket.accept());
+
+
             } catch (IOException ioe) {
                 System.out.println("Server accept error: " + ioe);
                 stop();
@@ -82,11 +83,11 @@ public class Server implements Runnable {
             for(  ChatServerThread cliente  : clients){
                 try {
 
-                    ThreadCommHandler.executeQueuedTasks();
 
 
+cliente.open();
                     cliente.send(message);
-                    cliente.cliente_flush();
+             //       cliente.cliente_flush();
                     System.out.println("GET MESSAGE to send: " + message + " ID "+ cliente.getUser_id());
 
                 } catch (Exception ignored) {}
@@ -104,7 +105,7 @@ String result = null;
 
             try {
 
-                ThreadCommHandler.executeQueuedTasks();
+
 
 
 
@@ -118,7 +119,7 @@ String result = null;
 return result;
     }
     private long time = 0;
-    public synchronized void handle(int ID, String input) throws IOException {
+    public void handle(int ID, String input) throws IOException {
 
 
 
@@ -145,7 +146,11 @@ return result;
             thread.start();
         }
     }
+public int Count() {
 
+
+  return clients.size();
+    }
     public void stop() {
         stop = true;
     }
