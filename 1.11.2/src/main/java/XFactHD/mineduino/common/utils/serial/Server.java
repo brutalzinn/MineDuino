@@ -35,8 +35,10 @@ public class Server implements Runnable {
 
     @Override
     public void run() {
+
         while (!stop) {
             try {
+
                 System.out.println("Waiting for a client ...");
                 addThread(serverSocket.accept());
 
@@ -50,6 +52,7 @@ public class Server implements Runnable {
 
     public void addThread(Socket socket) {
         System.out.println("Client accepted: " + socket);
+
         client = new ChatServerThread(this, socket);
         try {
             client.open();
@@ -81,18 +84,18 @@ public class Server implements Runnable {
 
 
             for(  ChatServerThread cliente  : clients){
-                try {
 
 
 
-cliente.open();
-                    cliente.send(message);
-             //       cliente.cliente_flush();
-                    System.out.println("GET MESSAGE to send: " + message + " ID "+ cliente.getUser_id());
 
-                } catch (Exception ignored) {}
-            }
+if(cliente != null) {
 
+
+    cliente.send(message);
+    //       cliente.cliente_flush();
+    System.out.println("GET MESSAGE to send: " + message + " ID " + cliente.getUser_id());
+}
+                }
 
 
     }
@@ -107,11 +110,12 @@ String result = null;
 
 
 
+if(cliente != null) {
 
 
-               result =  cliente.read();
-                System.out.println("GET MESSAGE to read: " + result + " ID "+ cliente.getUser_id());
-
+    result = cliente.read();
+    System.out.println("GET MESSAGE to read: " + result + " ID " + cliente.getUser_id());
+}
             } catch (Exception ignored) {}
         }
 

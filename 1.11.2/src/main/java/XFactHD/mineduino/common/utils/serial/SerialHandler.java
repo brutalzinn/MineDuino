@@ -165,7 +165,7 @@ public static Socket socket_cliente;
             };
 
 
-               // senderThread.start();
+         //     senderThread.start();
 
 
 

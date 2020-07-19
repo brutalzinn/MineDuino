@@ -1,5 +1,7 @@
 package XFactHD.mineduino.common.utils.serial;
 
+import XFactHD.mineduino.common.utils.LogHelper;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -53,11 +55,24 @@ String result = null;
     public void run() {
         while (true) {
 
+            time = System.currentTimeMillis();
+            ThreadCommHandler.executeQueuedTasks();
+            try {
+                try {
+                    if(streamIn.ready()){
+                        SerialHandler.getSerialHandler().serialEvent();
 
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
 
-                ThreadCommHandler.executeQueuedTasks();
+                sleep(Math.abs(50 - (System.currentTimeMillis() - time)));
+            } catch (InterruptedException e) {
+                LogHelper.error("Thread '" + Thread.currentThread().getName() + "' was interrupted!");
+                e.printStackTrace();
+            }
 
-                    SerialHandler.getSerialHandler().serialEvent();
                  //   sleep(Math.abs((System.currentTimeMillis() - time)));
 
 
